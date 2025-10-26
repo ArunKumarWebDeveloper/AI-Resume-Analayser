@@ -1,14 +1,34 @@
 import {type FormEvent, useState} from 'react'
 import Navbar from "~/components/Navbar";
 import {Input} from "postcss";
+import Fileuploader from "~/components/Fileuploader";
 
 const Upload = () => {
     const [isProcessing,setIsProcessing]= useState(false);
     const [statusText, setStatusText]= useState("");
-    const handleSubmit=(e:FormEvent< HTMLFormElement>)=>{}
+    const [file, setFile]=useState<File | null>(null);
 
 
-    return (
+    const handleSubmit=(e:FormEvent< HTMLFormElement>)=>{
+        e.preventDefault();
+        const form=e.currentTarget.closest('form');
+        if(!form) return;
+        const formData = new FormData(form);
+
+        const companyName = formData.get('company-name') as string;
+        const jobTitle = formData.get('job-title') as string;
+        const jobDescription = formData.get('job-description') as string;
+
+        if(!file) return;
+
+        console.log({ companyName, jobTitle, jobDescription, file });
+    }
+
+     const handleFileSelect = (file : File | null) =>{
+setFile(file)
+     }
+
+      return (
         <main className="bg-[url('/images/main.svg')] bg-cover">
             <Navbar />
 
@@ -42,9 +62,11 @@ const Upload = () => {
                           </div>
                           <div className="form-div">
                               <label htmlFor="uploader">Upload Resume</label>
-                              <textarea rows={5}  name="job-description" placeholder="Job Description" id="job-description" />
+                                <Fileuploader onFileSelect={handleFileSelect} />
                           </div>
-
+                   <button className="primary-button" type="submit">
+                       Analyze Resume
+                   </button>
                       </form>
                   ) }
               </div>
